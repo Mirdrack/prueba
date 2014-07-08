@@ -1,8 +1,8 @@
-<?
+<?php
 /**
 * A class to manage all the sql operations of the system
 * Here we gonna set the data of the conection and the methods
-* will manage the opertaiosn with the database
+* will manage the opertaions with the database
 */
 class SqlEngine
 {

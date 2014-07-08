@@ -1,3 +1,4 @@
+var cont = 0;
 $(document).ready(function()
 {
 	
@@ -17,18 +18,21 @@ $(document).ready(function()
 	{
 		console.log("invalid");
 	})
-	.on('valid.fndtn.abide', register);
+	.on('valid.fndtn.abide', function()
+	{
+		if(cont === 0)
+			register();
+		cont = cont + 1;
+	});
 });
 
 function register(event)
 {
 	console.log("lets register the car");
-	var url = 'catcher.php';
 	var picture = $("#picture");
 
 	var fileReader = new FileReader();
 	var file = picture[0].files[0];
-	console.log(file);
 	/*var imageElem = document.createElement("img");
 	fileReader.onload = (function(img) { return function(e) { img.src = e.target.result; }; })(imageElem);*/
 	fileReader.readAsDataURL(file);
@@ -39,27 +43,37 @@ function register(event)
 
 function uploadFile(file)
 {
+
+	var url = 'register/register.php';
 	var xhr = new XMLHttpRequest();
 	var formData = new FormData();
 	formData.append('plates', $("#plates").val());
 	formData.append('color', $("#color").val());
-	formData.append('year', $("#make").val());
-	formData.append('make', $("#model").val());
+	formData.append('year', $("#year").val());
+	formData.append('make', $("#make").val());
+	formData.append('model', $("#model").val());
 	formData.append('file', file);
-	xhr.upload.addEventListener("progress", function(e)
+	
+	/*xhr.upload.addEventListener("progress", function(e)
 	{
 		if (e.lengthComputable)
 		{
-			var percentage = Math.round((e.loaded * 100) / e.total);
-			/*$("#progressbar").progressbar("value",percentage);
-			$("#percentage").html(percentage+"%");*/
+			//var percentage = Math.round((e.loaded * 100) / e.total);
+			//$("#progressbar").progressbar("value",percentage);
+			//$("#percentage").html(percentage+"%");
 			if(percentage == 100)
 				$("#vehicleSaved").html("vehicleSaved");
 		}
-	}, false);
-	xhr.open("POST", "catcher.php");
+	}, false);*/
+	xhr.open("POST", url, true);
 	//xhr.overrideMimeType('text/plain; charset=x-user-defined-binary');
 	xhr.overrideMimeType('json');
+	
+	xhr.onreadystatechange = function()
+	{
+		if (this.readyState == 4 && xhr.status == 200)
+			$("#content").html("<h1>Tu vehículo fue guardo exitosamente</h1>");
+	};
 	xhr.send(formData);
 }
 
