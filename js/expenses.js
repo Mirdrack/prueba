@@ -1,8 +1,5 @@
 $(document).ready(function()
 {
-	var requestContToll = 0;
-	var requestContRand = 0;
-	var requestContGas	= 0;
 	$(document).foundation();
 	loadVehicles();
 	$("#vehicle").change(vehicleChangeHandler);
@@ -12,27 +9,37 @@ $(document).ready(function()
 	{
 		console.log('Invalid');
 	})
-	.on('valid.fndtn.abide', function()
+	.on('valid', function()
 	{
-		if(requestContToll === 0)
+		if(validateVehicle())
 		{
 			registerTollExpense();
-			requestContToll++;
 		}
+		return false;
 	});
 
 	$('#gasForm')
-	.on('invalid.fndtn.abide', function ()
+	.on('invalid.fndtn.abide', function()
 	{
 		console.log('Invalid Gas');
 	})
-	.on('valid.fndtn.abide', function()
+	.on('valid', function(event)
 	{
-		if(requestContGas === 0)
+		if(validateVehicle())
 		{
-			registerGasExpense();
-			requestContGas++;
+			validateKm(function(data)
+			{
+				console.log(data);
+				if(data.error == 'No expenses' || data.error == null)
+					registerGasExpense();
+				else
+				{
+					$('#invalidKmError').foundation('reveal', 'open');
+					$('#invalidKmError').foundation('reveal', 'close');
+				}
+			});
 		}
+		return false;
 	});
 
 	$('#randomForm')
@@ -40,14 +47,14 @@ $(document).ready(function()
 	{
 		console.log('Invalid Random');
 	})
-	.on('valid.fndtn.abide', function()
+	.on('valid', function()
 	{
-		if(requestContToll === 0)
+		if(validateVehicle())
 		{
 			registerRandomExpense();
-			requestContRand++;
 		}
 	});
+	return false;
 });
 
 //Set info vehicle functions
@@ -102,9 +109,32 @@ function fillVehicleData(data)
 {
 	var img = $('<img>');
 	img.attr('src', 'files/' + data.picture);
-	img.appendTo('#vehicleImage');
+	$('#vehicleImage').html(img);
+	if(data.expenses != null)
+		fillVehicleExpenses(data.expenses)
 }
-//End set info vehicle functions
+
+function fillVehicleExpenses(data)
+{
+	for (var cont = 0; cont < data.length; cont++)
+	{
+		printExpense(data[cont]);
+	};
+}
+
+function validateVehicle()
+{
+	var vehicle = $('#vehicle').val();
+	if(vehicle != 'Selecciona un Vehículo')
+		return true;
+	else
+	{
+		$('#selectVehicleError').foundation('reveal', 'open');
+		$('#selectVehicleError').foundation('reveal', 'close');
+		return false;
+	}
+}
+//End info vehicle functions
 
 //Toll expense functions
 function registerTollExpense()
@@ -134,17 +164,78 @@ function registerTollExpense()
 // RandomExpense functions
 function registerRandomExpense()
 {
-	console.log("valid");
+	var url = 'expenses/registerRandomExpense.php';
+	var xhr = new XMLHttpRequest();
+	var formData = new FormData();
+	formData.append('vehicleId', $("#vehicle").val());
+	formData.append('concept', $("#concept").val());
+	formData.append('amount', $("#randomPrice").val());
+	
+	xhr.open("POST", url, true);
+	xhr.overrideMimeType('json');
+	
+	xhr.onreadystatechange = function()
+	{
+		if (this.readyState == 4 && xhr.status == 200)
+		{
+			response = JSON.parse(this.responseText);
+			printExpense(response.expense);
+			console.log(response);
+		}
+	};
+	xhr.send(formData);
 }
 // End RandomExpense functions
 
 // GasExpense functions
 function registerGasExpense()
 {
-	console.log("valid");
+	var url = 'expenses/registerGasExpense.php';
+	var xhr = new XMLHttpRequest();
+	var formData = new FormData();
+	formData.append('vehicleId', $("#vehicle").val());
+	formData.append('km', $("#km").val());
+	formData.append('amount', $("#gasPrice").val());
+	
+	xhr.open("POST", url, true);
+	xhr.overrideMimeType('json');
+	
+	xhr.onreadystatechange = function()
+	{
+		if (this.readyState == 4 && xhr.status == 200)
+		{
+			response = JSON.parse(this.responseText);
+			printExpense(response.expense);
+			console.log(response);
+		}
+	};
+	xhr.send(formData);
+}
+
+function validateKm(callback)
+{
+	var url = 'expenses/validateKm.php';
+	var xhr = new XMLHttpRequest();
+	var formData = new FormData();
+	formData.append('vehicleId', $("#vehicle").val());
+	formData.append('km', $("#km").val());	
+	xhr.open("POST", url, true);
+	xhr.overrideMimeType('json');
+	
+	xhr.onreadystatechange = function()
+	{
+		if (this.readyState == 4 && xhr.status == 200)
+		{
+			response = JSON.parse(this.responseText);
+			callback.apply(this, [response]);
+		}
+	};
+	xhr.send(formData);	
 }
 // End GasExpense functions
 
+
+// UI functions
 function printExpense(data)
 {
 	data.type = parseInt(data.type);
@@ -176,7 +267,27 @@ function printExpense(data)
 			expenseTitle.append('<strong>Error</strong>');
 			content.append('No se pudo recuperar el gasto registrado');
 	}
+	clean(data.type);
 	expense.append(expenseTitle);
 	expense.append(content);
 	expense.appendTo('#vehicleExpensesList');
 }
+
+function clean(type)
+{
+	switch(type)
+	{
+		case 1:
+			$('#tollPrice').val('');
+			break;
+		case 2:
+			$('#km').val('');
+			$('#gasPrice').val('');
+			break;
+		case 3:
+			$('#concept').val();
+			$('#randomPrice').val();
+			break;
+	}
+}
+// End UI functions

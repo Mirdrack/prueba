@@ -1,5 +1,6 @@
 <?php
 require_once('SQLEngine.php');
+require_once('Expenses.php');
 /**
 * This class allow manage update functions and help
 * when we need ask info of vehicles
@@ -17,10 +18,13 @@ class Vehicle
 	private $model;
 	private $picture;
 
+	private $expenses;
+
 	function __construct()
 	{
 		$this->sql = new SqlEngine();
 		$this->sql->connect();
+		$this->expenses = array();
 	}
 
 	public function add($plates, $color, $year, $make, $model, $picture)
@@ -100,6 +104,15 @@ class Vehicle
 		}
 	}
 
+	private function setExpenses()
+	{
+		$expenses = new Expenses();
+		if($expenses->getAllByVehicle($this->id))
+			return $expenses->getExpenses();
+		else
+			return $expenses->getError();
+	}
+
 	public function setVehicle($row)
 	{
 		$this->id		= $row["id"];
@@ -109,6 +122,7 @@ class Vehicle
 		$this->make 	= $row["make"];
 		$this->model 	= $row["model"];
 		$this->picture 	= $row["picture"];
+		$this->expenses  = $this->setExpenses();
 	}
 
 	public function asArray()
@@ -120,6 +134,7 @@ class Vehicle
 		$data["make"]	 	= $this->make;
 		$data["model"] 		= $this->model;
 		$data["picture"] 	= $this->picture;
+		$data["expenses"]	= $this->expenses;
 		return $data;
 	}
 

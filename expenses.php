@@ -125,6 +125,22 @@
           <!-- End Register expenses -->
         </div>
         <!-- End content of the page -->
+        <!-- Modal select vehicle error -->
+        <div id="selectVehicleError" class="reveal-modal text-center small" data-reveal>
+          <h2>Error</h2>
+          <p>Debes seleccionar un veh&iacute;culo al cual asignarle los gastos</p>
+          <p>Intenta de nuevo.</p>
+          <a class="close-reveal-modal">&#215;</a>
+        </div>
+        <!-- End Modal select vehicle error -->
+        <!-- Invalid Km error -->
+        <div id="invalidKmError" class="reveal-modal text-center small" data-reveal>
+          <h2>Error</h2>
+          <p>Debes ingresar un Km posterior al Km del &uacute;ltimo gasto ingresado</p>
+          <p>Intenta de nuevo.</p>
+          <a class="close-reveal-modal">&#215;</a>
+        </div>
+        <!-- Invalid Km error -->
       <?php
       }
       else
