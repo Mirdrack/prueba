@@ -29,7 +29,7 @@
                   <li><a href="register.php">Registrar auto</a></li>
                   <li><a href="expenses.php">Registrar gastos</a></li>
                   <li><a href="resume.php">Resumen</a></li>
-                  <li><a href="login/logout.php">Salir</a></li>
+                  <li><a href="login/logout.php">Resumen</a></li>
                 </ul>
               </section>
             </nav>
@@ -65,7 +65,6 @@
                   <div class="toll">
                       <label>Veh&iacute;culo
                       <select id="toll">
-                        <option>Selecciona la caseta</option>
                         <option value="Caseta 1">Caseta 1</option>
                         <option value="Caseta 2">Caseta 2</option>
                         <option value="Caseta 3">Caseta 3</option>
@@ -78,7 +77,7 @@
                   <div class="toollsPrice">
                     <label>Monto:</label>
                     <input id="tollPrice" type="text" placeholder="Monto de las caseta" required pattern="^\d+(\.\d{1,2})?" />
-                    <small class="error">Este es un campo requerido y solo se permiten n&uacute;meros</small>
+                    <small class="error">Este es un campo requerido y solo se permiten n&uacute;meros con un m&aacute;ximo de dos decimales</small>
                   </div>
                   <div>
                     <button id="submitToll" class="expand button" type="submit">Registrar Gasto</button>
@@ -87,31 +86,39 @@
               </div>
               <div id="gas">
                 <h3>Gasolina</h3>
-                <div class="row">
-                  <label>Kilometrage:</label>
-                  <input id="km" type="text" placeholder="Kilometrage" />
-                </div>
-                <div class="row">
-                  <label>Monto:</label>
-                  <input id="gasPrice" type="text" placeholder="Monto" />
-                </div>
-                <div class="row">
-                  <button id="submitGas" class="expand button" type="submit">Registrar Gasto</button>
-                </div>
+                <form id="gasForm" data-abide="ajax" >
+                  <div class="km">
+                    <label>Kilometrage:</label>
+                    <input id="km" type="text" placeholder="Kilometrage" required patter="integer" />
+                    <small class="error">Este es un campo requerido y solo se permiten n&uacute;meros enteros</small>
+                  </div>
+                  <div class="gasPrice">
+                    <label>Monto:</label>
+                    <input id="gasPrice" type="text" placeholder="Monto" required pattern="^\d+(\.\d{1,2})?" />
+                    <small class="error">Este es un campo requerido y solo se permiten n&uacute;meros con un m&aacute;ximo de dos decimales</small>
+                  </div>
+                  <div>
+                    <button id="submitGas" class="expand button" type="submit">Registrar Gasto</button>
+                  </div>
+                </form>
               </div>
               <div id="random">
                 <h3>Varios</h3>
-                <div class="row">
-                  <label>Concepto:</label>
-                  <input id="concept" type="text" placeholder="Concepto" />
-                </div>
-                <div class="row">
-                  <label>Monto:</label>
-                  <input id="randomPrice" type="text" placeholder="Monto" />
-                </div>
-                <div class="row">
-                  <button id="submitRandom" class="expand button" type="submit">Registrar Gasto</button>
-                </div>
+                <form id="randomForm" data-abide="ajax" >
+                  <div class="concept">
+                    <label>Concepto:</label>
+                    <input id="concept" type="text" placeholder="Concepto" required patter="alpha_numeric" />
+                    <small class="error">Este es un campo requerido y solo se permiten datos alfanumericos</small>
+                  </div>
+                  <div class="randomPrice">
+                    <label>Monto:</label>
+                    <input id="randomPrice" type="text" placeholder="Monto" required pattern="^\d+(\.\d{1,2})?"/>
+                    <small class="error">Este es un campo requerido y solo se permiten n&uacute;meros con un m&aacute;ximo de dos decimales</small>
+                  </div>
+                  <div>
+                    <button id="submitRandom" class="expand button" type="submit">Registrar Gasto</button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
